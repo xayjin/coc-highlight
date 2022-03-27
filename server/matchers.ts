@@ -1,6 +1,7 @@
 import Color from 'color'
 import webColors from 'color-name'
 import { Color as VSColor, ColorInformation, Range, TextDocument } from 'vscode-languageserver'
+import YCOLOR from './ycolor'
 
 const names = Object.keys(webColors)
 const colorHex = /(?<!&|\w)((?:#)([a-f0-9]{6}([a-f0-9]{2})?|[a-f0-9]{3}([a-f0-9]{1})?))\b/gi
@@ -9,7 +10,15 @@ const colorHwb = /(?:\b(hwb)\(\d+,\s*(100|0*\d{1,2})%,\s*(100|0*\d{1,2})%(,\s*0?
 const colorHexFlutter= /(?<=Color\(\s*0x)(?:[a-fA-F0-9]{1,8})(?=\s*\))/g
 
 export function getNameColor(word: string): VSColor | null {
-  if (names.indexOf(word) == -1) return null
+	if (names.indexOf(word) == -1){
+		if(YCOLOR.hasOwnProperty(word))
+			{
+  let c = new Color(YCOLOR[word])
+  return { red: c.red() / 255, green: c.green() / 255, blue: c.blue() / 255, alpha: 1 }
+
+			}
+		return null
+	} 
   let c = new Color(word)
   return { red: c.red() / 255, green: c.green() / 255, blue: c.blue() / 255, alpha: 1 }
 }
